@@ -15,10 +15,22 @@ $requiredParams = [
 // Get parameters from either POST or GET
 $requestData = $_GET ?: $_POST;
 
+// Debug logging
+error_log("PDF Generation - Request method: " . $_SERVER['REQUEST_METHOD']);
+error_log("PDF Generation - GET params: " . print_r($_GET, true));
+error_log("PDF Generation - Session user: " . ($_SESSION['user_id'] ?? 'not set'));
+
+$missingParams = [];
 foreach ($requiredParams as $param) {
     if (!isset($requestData[$param])) {
-        die("Error: Missing required parameter: $param");
+        $missingParams[] = $param;
     }
+}
+
+if (!empty($missingParams)) {
+    error_log("PDF Generation - Missing parameters: " . implode(', ', $missingParams));
+    die("Error: Missing required parameters: " . implode(', ', $missingParams) . 
+        "<br><br>Please go back and try again. If the problem persists, contact support.");
 }
 
 // Get data
@@ -45,7 +57,7 @@ db();
 if ($userRole == 'Student') {
     $sql = "SELECT FirstName, LastName, Department, Program, YearSection FROM student WHERE StudentID = ?";
 } else if ($userRole == 'Teacher') {
-    $sql = "SELECT FirstName, LastName, Department, Position, Specialization FROM teacher WHERE TeacherID = ?";
+    $sql = "SELECT FirstName, LastName, Department FROM teacher WHERE TeacherID = ?";
 }
 
 $stmt = $conn->prepare($sql);

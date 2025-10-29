@@ -42,7 +42,7 @@
         if ($userRole == 'Student') {
             echo htmlspecialchars($userData['Department'] . ' - ' . $userData['YearSection']);
         } else {
-            echo htmlspecialchars($userData['Department'] . ' - ' . $userData['Position']);
+            echo htmlspecialchars($userData['Department']);
         }
         ?>
         has formally requested the use of a room for an upcoming activity.
@@ -69,11 +69,6 @@
         <div class="form-field">
             <div class="form-label">Program/Section:</div>
             <div class="form-value"><?php echo htmlspecialchars($userData['YearSection']); ?></div>
-        </div>
-        <?php else: ?>
-        <div class="form-field">
-            <div class="form-label">Position:</div>
-            <div class="form-value"><?php echo htmlspecialchars($userData['Position']); ?></div>
         </div>
         <?php endif; ?>
         <div class="form-field">

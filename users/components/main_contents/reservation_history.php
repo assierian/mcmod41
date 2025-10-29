@@ -62,8 +62,8 @@
         // Get counts for each type
         $countSql = "SELECT 
                         COUNT(*) as TotalCount,
-                        SUM(CASE WHEN EndTime > NOW() AND Status = 'approved' THEN 1 ELSE 0 END) as UpcomingCount,
-                        SUM(CASE WHEN EndTime < NOW() AND Status = 'approved' THEN 1 ELSE 0 END) as CompletedCount,
+                        SUM(CASE WHEN CONCAT(ReservationDate, ' ', EndTime) > NOW() AND Status = 'approved' THEN 1 ELSE 0 END) as UpcomingCount,
+                        SUM(CASE WHEN CONCAT(ReservationDate, ' ', EndTime) <= NOW() AND Status = 'approved' THEN 1 ELSE 0 END) as CompletedCount,
                         SUM(CASE WHEN Status = 'rejected' THEN 1 ELSE 0 END) as CancelledCount
                      FROM room_requests 
                      WHERE $idField = ?";
@@ -140,13 +140,14 @@
                     $endTime = date('g:i A', strtotime($row['EndTime']));
                     $status = $row['Status'];
                     $equipment = $row['equipment_list'] ?: 'None';
-                    $endTimeObj = new DateTime($row['EndTime']);
+                    // Combine ReservationDate and EndTime to get full datetime
+                    $endTimeObj = new DateTime($row['ReservationDate'] . ' ' . $row['EndTime']);
                     $now = new DateTime();
 
                     // Determine type for filtering
                     $type = $status;
                     if ($status == 'approved') {
-                        if ($endTimeObj < $now) {
+                        if ($endTimeObj <= $now) {
                             $type = 'completed';
                         } else {
                             $type = 'upcoming';
@@ -160,7 +161,7 @@
                     $statusLabel = ucfirst($status);
 
                     if ($status == 'approved') {
-                        if ($endTimeObj < $now) {
+                        if ($endTimeObj <= $now) {
                             $badgeClass = 'badge-completed';
                             $statusLabel = 'Completed';
                         }

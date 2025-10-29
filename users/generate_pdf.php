@@ -1,6 +1,17 @@
 <?php
-require_once '../auth/middleware.php';
-checkAccess(['Student', 'Teacher']);
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+error_log("PDF Generation - Page accessed at " . date('Y-m-d H:i:s'));
+
+try {
+    require_once '../auth/middleware.php';
+    checkAccess(['Student', 'Teacher']);
+    error_log("PDF Generation - Middleware check passed");
+} catch (Exception $e) {
+    error_log("PDF Generation - Middleware error: " . $e->getMessage());
+    die("Access error: Please ensure you are logged in and try again.");
+}
 
 include 'includes/pdf_contents.php'
 ?>

@@ -350,6 +350,13 @@ function printRequestDetails(
     }
   }
 
+  // Build the full URL
+  var pdfUrl = 'generate_pdf.php?' + queryParams.toString();
+  
+  // Log the URL for debugging
+  console.log('Navigating to PDF generation page:', pdfUrl);
+  console.log('Full URL:', window.location.origin + window.location.pathname.replace('users_reservation_history.php', '') + pdfUrl);
+  
   // Navigate to generate_pdf.php with query parameters
-  window.location.href = 'generate_pdf.php?' + queryParams.toString();
+  window.location.href = pdfUrl;
 }
